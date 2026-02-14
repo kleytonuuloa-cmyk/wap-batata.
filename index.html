@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wap Batata Recheada - Sistema Completo</title>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+body{height:100vh;overflow:hidden;background:#fff8e1}
+
+/* LOGIN */
+#login{height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(45deg,#ffcc00,#ff0000);background-size:cover;background-position:center;}
+.loginBox{background:white;padding:30px;border-radius:15px;width:90%;max-width:350px;text-align:center;box-shadow:0 0 20px rgba(0,0,0,0.3);}
+.loginBox h2{color:#d32f2f;margin-bottom:15px;}
+.loginBox input{width:100%;padding:12px;margin:10px 0;border:2px solid #ffcc00;border-radius:8px;}
+.loginBox button{width:100%;padding:12px;background:#d32f2f;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:bold;}
+
+/* SISTEMA */
+#sistema{display:none;height:100vh;display:flex;}
+.sidebar{width:200px;background:#d32f2f;color:white;padding:15px;display:flex;flex-direction:column;}
+.sidebar button{background:#ffcc00;border:none;color:#b71c1c;padding:10px;margin-bottom:8px;cursor:pointer;font-weight:bold;border-radius:6px;}
+.sidebar button:hover{background:white;}
+.content{flex:1;padding:20px;overflow:auto;background:#fffde7;}
+.pagina{display:none;}
+.card{background:white;padding:15px;border-radius:12px;margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,0.1);border-left:8px solid #d32f2f;}
+table{width:100%;border-collapse:collapse;margin-top:10px;color:black;}
+th{background:#d32f2f;color:white;padding:8px;}
+td{border:1px solid #ccc;padding:8px;text-align:center;}
+.action{background:#d32f2f;color:white;border:none;padding:10px;cursor:pointer;border-radius:6px;font-weight:bold;width:100%;margin-top:10px;}
+.formInput{width:100%;padding:10px;margin-top:8px;border:1px solid #ccc;border-radius:6px;}
+#barcodeScanner{width:100%;min-height:250px;margin-top:10px;border-radius:8px;background:#000;}
+#chatModal{position:fixed;right:20px;bottom:20px;width:300px;background:white;border-radius:12px;box-shadow:0 0 15px rgba(0,0,0,0.3);display:none;flex-direction:column;max-height:400px;}
+#chatHeader{background:#d32f2f;color:white;padding:10px;border-radius:12px 12px 0 0;font-weight:bold;display:flex;justify-content:space-between;align-items:center;}
+#chatBox{flex:1;padding:10px;overflow-y:auto;background:#fff9c4;}
+#chatInputContainer{display:flex;padding:10px;border-top:1px solid #ccc;}
+#chatInputContainer input{flex:1;margin-right:5px;border-radius:6px;border:1px solid #ccc;padding:6px;}
+#chatInputContainer button{padding:6px 10px;border:none;border-radius:6px;background:#d32f2f;color:white;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<div id="login">
+    <div class="loginBox">
+        <h2> Wap Batata Recheada</h2>
+        <input type="text" id="user" placeholder="Usuário">
+        <input type="password" id="pass" placeholder="Senha">
+        <button onclick="login()">Entrar</button>
+    </div>
+</div>
+
+<div id="sistema">
+    <div class="sidebar">
+        <h3>Wap Batata</h3>
+        <button onclick="mostrar('cardapio')">Estoque/Itens</button>
+        <button onclick="mostrar('pedidos')">Vender</button>
+        <button onclick="mostrar('vendas')">Relatório</button>
+        <button onclick="mostrar('barcode')">Scanner</button>
+        <button onclick="abrirChat()">Chat Cozinha</button>
+        <button onclick="location.reload()" style="margin-top:auto;background:white;color:red">Sair</button>
+    </div>
+
+    <div class="content">
+        <!-- ESTOQUE -->
+        <div id="cardapio" class="pagina">
+            <div class="card">
+                <h3>Cadastrar Novo Item</h3>
+                <input type="text" id="codItem" class="formInput" placeholder="Código de Barras">
+                <input type="text" id="nomeItem" class="formInput" placeholder="Nome do Produto">
+                <input type="number" id="precoItem" class="formInput" placeholder="Preço R$">
+                <input type="number" id="estoqueItem" class="formInput" placeholder="Qtd Inicial em Estoque">
+                <button class="action" onclick="salvarItem()">Salvar Produto</button>
+            </div>
+            <div class="card">
+                <table>
+                    <thead><tr><th>Item</th><th>Preço</th><th>Qtd</th><th>Ação</th></tr></thead>
+                    <tbody id="corpoEstoque"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PEDIDOS -->
+        <div id="pedidos" class="pagina">
+            <div class="card">
+                <h3>Novo Pedido</h3>
+                <select id="selectProd" class="formInput" onchange="verificarEstoque()"></select>
+                <input type="number" id="qtdVenda" value="1" min="1" class="formInput">
+                <p id="msgEstoque" style="color:red;font-size:12px;margin-top:5px;"></p>
+                <button class="action" style="background:#27ae60" onclick="adicionarAoCarrinho()">Adicionar ao Carrinho</button>
+            </div>
+            <div class="card" style="color:black">
+                <h4>Carrinho:</h4>
+                <ul id="carrinho"></ul>
+                <hr style="margin:10px 0">
+                <h3>Total: R$ <span id="valorTotal">0.00</span></h3>
+                <input type="number" id="valorRecebido" class="formInput" placeholder="Valor Recebido">
+                <button class="action" style="background:#16a085" onclick="calcularTroco()">Calcular Troco</button>
+                <p>Troco: R$ <span id="troco">0.00</span></p>
+                <button class="action" style="background:#d35400" onclick="finalizarVenda()">Finalizar e Baixar Estoque</button>
+            </div>
+        </div>
+
+        <!-- VENDAS -->
+        <div id="vendas" class="pagina">
+            <div class="card"><h3>Histórico de Vendas</h3><ul id="historico" style="color:black"></ul></div>
+        </div>
+
+        <!-- SCANNER -->
+        <div id="barcode" class="pagina">
+            <div class="card">
+                <h3>Scanner Pro</h3>
+                <div id="barcodeScanner"></div>
+                <button class="action" onclick="mostrar('pedidos')">Voltar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CHAT -->
+<div id="chatModal">
+    <div id="chatHeader">
+        <span>Chat Cozinha</span>
+        <button onclick="fecharChat()">X</button>
+    </div>
+    <div id="chatBox"></div>
+    <div id="chatInputContainer">
+        <input type="text" id="chatInput" placeholder="Digite sua mensagem">
+        <button onclick="enviarChat()">Enviar</button>
+    </div>
+</div>
+
+<script>
+let database = JSON.parse(localStorage.getItem('wap_data')) || {};
+let carrinho = [];
+let totalVenda = 0;
+let html5QrCode;
+let usuarioAtual="";
+let chatMensagens = JSON.parse(localStorage.getItem('wap_chat')) || [];
+
+// LOGIN
+function login(){
+    let u = document.getElementById("user").value.toLowerCase();
+    let p = document.getElementById("pass").value;
+    if(["talyta","kleyton","rafael","kemilly"].includes(u) && p==="2312"){
+        usuarioAtual = u;
+        document.getElementById("login").style.display="none";
+        document.getElementById("sistema").style.display="flex";
+        atualizarTabelas();
+        carregarChat();
+    } else { alert("Login inválido!"); }
+}
+
+// MOSTRAR ABA
+function mostrar(id){
+    document.querySelectorAll(".pagina").forEach(p=>p.style.display="none");
+    document.getElementById(id).style.display="block";
+    if(id==='barcode') startScanner(); else stopScanner();
+}
+
+// SALVAR ITEM
+function salvarItem(){
+    let cod=document.getElementById("codItem").value || document.getElementById("nomeItem").value;
+    let nome=document.getElementById("nomeItem").value;
+    let preco=parseFloat(document.getElementById("precoItem").value);
+    let qtd=parseInt(document.getElementById("estoqueItem").value) || 0;
+    if(!nome || !preco) return alert("Preencha nome e preço!");
+    database[cod]={nome,preco,qtd};
+    localStorage.setItem('wap_data',JSON.stringify(database));
+    document.getElementById("codItem").value="";
+    document.getElementById("nomeItem").value="";
+    document.getElementById("precoItem").value="";
+    document.getElementById("estoqueItem").value="";
+    atualizarTabelas();
+}
+
+// ATUALIZAR TABELAS
+function atualizarTabelas(){
+    let corpo=document.getElementById("corpoEstoque");
+    let select=document.getElementById("selectProd");
+    corpo.innerHTML=""; select.innerHTML="";
+    for(let id in database){
+        let item=database[id];
+        let row=corpo.insertRow();
+        row.style.color=item.qtd<5?"red":"black";
+        row.insertCell(0).innerText=item.nome;
+        row.insertCell(1).innerText="R$ "+item.preco.toFixed(2);
+        let cellQtd=row.insertCell(2);
+        let inp=document.createElement("input"); inp.type="number"; inp.value=item.qtd; inp.style.width="50px";
+        inp.onchange=e=>{database[id].qtd=parseInt(e.target.value); localStorage.setItem('wap_data',JSON.stringify(database)); atualizarTabelas();}
+        cellQtd.appendChild(inp);
+        let cellDel=row.insertCell(3);
+        cellDel.innerHTML=`<button onclick="delete database['${id}']; localStorage.setItem('wap_data', JSON.stringify(database)); atualizarTabelas()">X</button>`;
+        let opt=document.createElement("option");
+        opt.value=id; opt.text=`${item.nome} (Estoque: ${item.qtd})`; select.appendChild(opt);
+    }
+}
+
+// VERIFICAR ESTOQUE
+function verificarEstoque(){
+    let id=document.getElementById("selectProd").value;
+    let msg=document.getElementById("msgEstoque");
+    msg.innerText=database[id] && database[id].qtd<=0?"AVISO: Produto esgotado!":"";
+}
+
+// CARRINHO
+function adicionarAoCarrinho(){
+    let id=document.getElementById("selectProd").value;
+    let qtd=parseInt(document.getElementById("qtdVenda").value);
+    if(!database[id] || database[id].qtd<qtd) return alert("Estoque insuficiente!");
+    carrinho.push({id,qtd,nome:database[id].nome,subtotal:database[id].preco*qtd});
+    totalVenda+=database[id].preco*qtd;
+    let li=document.createElement("li");
+    li.innerText=`${database[id].nome} x${qtd} - R$ ${(database[id].preco*qtd).toFixed(2)}`;
+    document.getElementById("carrinho").appendChild(li);
+    document.getElementById("valorTotal").innerText=totalVenda.toFixed(2);
+}
+
+// TROCO
+function calcularTroco(){
+    let recebido=parseFloat(document.getElementById("valorRecebido").value);
+    if(!recebido) return;
+    document.getElementById("troco").innerText=(recebido-totalVenda).toFixed(2);
+}
+
+// FINALIZAR VENDA
+function finalizarVenda(){
+    if(carrinho.length===0) return;
+    carrinho.forEach(item=>{database[item.id].qtd-=item.qtd;});
+    let li=document.createElement("li");
+    li.innerText=`Venda R$ ${totalVenda.toFixed(2)} às ${new Date().toLocaleTimeString()}`;
+    document.getElementById("historico").prepend(li);
+    localStorage.setItem('wap_data',JSON.stringify(database));
+    carrinho=[]; totalVenda=0; document.getElementById("carrinho").innerHTML=""; document.getElementById("valorTotal").innerText="0.00"; document.getElementById("troco").innerText="0.00";
+    atualizarTabelas();
+}
+
+// SCANNER
+function startScanner(){
+    if(html5QrCode) return;
+    html5QrCode=new Html5Qrcode("barcodeScanner");
+    html5QrCode.start({facingMode:"environment"},{fps:10,qrbox:250},
+        codigo=>{
+            if(database[codigo]){
+                document.getElementById("selectProd").value=codigo;
+                alert("Achamos: "+database[codigo].nome);
+                mostrar('pedidos');
+            }else{
+                document.getElementById("codItem").value=codigo;
+                alert("Novo código detectado! Cadastre o produto.");
+                mostrar('cardapio');
+            }
+        }, err=>{}
+    );
+}
+function stopScanner(){ if(html5QrCode){ html5QrCode.stop().then(()=>html5QrCode=null); } }
+
+// CHAT
+function abrirChat(){document.getElementById("chatModal").style.display="flex";}
+function fecharChat(){document.getElementById("chatModal").style.display="none";}
+function enviarChat(){
+    let txt=document.getElementById("chatInput").value.trim();
+    if(!txt) return;
+    let li=document.createElement("li");
+    li.innerText=`${usuarioAtual}: ${txt} (${new Date().toLocaleTimeString()})`;
+    document.getElementById("chatBox").appendChild(li);
+    chatMensagens.push(li.innerText);
+    localStorage.setItem('wap_chat',JSON.stringify(chatMensagens));
+    document.getElementById("chatInput").value="";
+    document.getElementById("chatBox").scrollTop=document.getElementById("chatBox").scrollHeight;
+}
+function carregarChat(){
+    let box=document.getElementById("chatBox");
+    box.innerHTML="";
+    chatMensagens.forEach(msg=>{let li=document.createElement("li"); li.innerText=msg; box.appendChild(li);});
+}
+
+// CARREGAR ESTOQUE AO ABRIR
+window.onload=atualizarTabelas;
+</script>
+</body>
+</html>
