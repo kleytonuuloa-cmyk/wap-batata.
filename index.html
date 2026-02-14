@@ -1,556 +1,466 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wap Batata Recheada</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
-body{height:100vh;overflow:hidden;background:#fff8e1}
-
-/* LOGIN */
-#login{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:linear-gradient(45deg,#ffcc00,#ff0000);
-background-size: cover;
-background-position: center;
-}
-
-.loginBox{
-background:white;
-padding:40px;
-border-radius:15px;
-width:90%;
-max-width:350px;
-text-align:center;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
-}
-
-.loginBox h2{
-color:#d32f2f;
-margin-bottom:15px;
-}
-
-.loginBox input{
-width:100%;
-padding:12px;
-margin:10px 0;
-border:2px solid #ffcc00;
-border-radius:8px;
-}
-
-.loginBox button{
-width:100%;
-padding:12px;
-background:#d32f2f;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-}
-
-/* SISTEMA */
-#sistema{
-display:none;
-height:100vh;
-display:flex;
-}
-
-/* MENU */
-.sidebar{
-width:220px;
-background:#d32f2f;
-color:white;
-padding:20px;
-display:flex;
-flex-direction:column;
-border-radius:0 20px 20px 0;
-}
-
-.sidebar h3{
-margin-bottom:20px;
-}
-
-.sidebar button{
-background:#ffcc00;
-border:none;
-color:#b71c1c;
-padding:10px;
-margin-bottom:10px;
-cursor:pointer;
-font-weight:bold;
-border-radius:6px;
-transition: all 0.3s;
-}
-
-.sidebar button:hover{
-background:white;
-}
-
-/* CONTEÚDO */
-.content{
-flex:1;
-padding:20px;
-overflow:auto;
-background:#fffde7;
-transition: all 0.3s;
-}
-
-.pagina{display:none;}
-
-.card{
-background:white;
-padding:25px;
-border-radius:15px;
-margin-bottom:20px;
-box-shadow:0 4px 15px rgba(0,0,0,0.08);
-border-left:8px solid #d32f2f;
-transition: all 0.3s ease;
-}
-
-.card:hover{
-transform: translateY(-3px);
-}
-
-/* TABELAS */
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:10px;
-}
-
-th{
-background:#d32f2f;
-color:white;
-}
-
-th,td{
-border:1px solid #ccc;
-padding:8px;
-}
-
-#tabelaProd .action{
-background: #dc3545;
-box-shadow:0 4px 15px rgba(220,53,69,0.3);
-}
-#tabelaProd .action:hover{
-background:#c82333;
-box-shadow:0 8px 25px rgba(220,53,69,0.5);
-}
-
-/* BOTÕES */
-button.action{
-background:#d32f2f;
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:50px;
-font-weight:600;
-cursor:pointer;
-transition: all 0.3s ease;
-box-shadow:0 2px 5px rgba(0,0,0,0.2);
-}
-
-button.action:hover{
-transform: translateY(-2px);
-box-shadow:0 4px 10px rgba(0,0,0,0.3);
-background:#b71c1c;
-}
-
-/* INPUTS */
-input.trocoInput, input.chatInput{
-width:100px;
-padding:6px;
-margin-top:10px;
-border:1px solid #ccc;
-border-radius:6px;
-}
-
-input:focus{
-outline:none;
-border-color:#ffcc00;
-}
-
-/* CHAT MODAL */
-#chatModal{
-position:fixed;
-right:20px;
-bottom:20px;
-width:300px;
-background:white;
-border-radius:12px;
-box-shadow:0 0 15px rgba(0,0,0,0.3);
-display:none;
-flex-direction:column;
-max-height:400px;
-}
-
-#chatHeader{
-background:#d32f2f;
-color:white;
-padding:10px;
-border-radius:12px 12px 0 0;
-font-weight:bold;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-#chatBox{
-flex:1;
-padding:10px;
-overflow-y:auto;
-background:#fff9c4;
-list-style:none;
-}
-
-#chatInputContainer{
-display:flex;
-padding:10px;
-border-top:1px solid #ccc;
-}
-
-#chatInputContainer input{
-flex:1;
-margin-right:5px;
-border-radius:6px;
-border:1px solid #ccc;
-padding:6px;
-}
-
-#chatInputContainer button{
-padding:6px 10px;
-border:none;
-border-radius:6px;
-background:#d32f2f;
-color:white;
-cursor:pointer;
-}
-
-/* COZINHA - COMANDAS */
-#listaCozinha{
-display:flex;
-flex-wrap:wrap;
-gap:20px;
-list-style:none;
-padding:0;
-margin:0;
-}
-
-.comanda-ticket{
-background:#fff;
-border:1px solid #eee;
-border-radius:8px;
-width:280px;
-padding:20px;
-box-shadow:0 4px 15px rgba(0,0,0,0.08);
-position:relative;
-overflow:hidden;
-display:flex;
-flex-direction:column;
-justify-content:space-between;
-transition: all 0.3s ease;
-}
-
-.comanda-ticket:hover{
-transform: translateY(-5px);
-box-shadow:0 8px 25px rgba(0,0,0,0.15);
-}
-
-.comanda-ticket::after{
-content:'';
-position:absolute;
-bottom:0;
-left:0;
-width:100%;
-height:10px;
-background: radial-gradient(circle at 5px -2px, transparent 6px, #fff 6px) bottom left / 12px 100%;
-background-repeat:repeat-x;
-transform:translateY(5px);
-border-top:1px dashed #ddd;
-}
-
-.comanda-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:15px;
-padding-bottom:10px;
-border-bottom:1px dashed #ccc;
-}
-
-.comanda-header h3{margin:0;color:#d32f2f;font-size:1.2em;}
-.comanda-header .comanda-time{font-size:0.85em;color:#888;}
-
-.comanda-items{
-list-style:none;
-padding:0;
-margin:0 0 15px 0;
-flex-grow:1;
-}
-
-.comanda-items li{
-font-size:0.95em;
-padding:5px 0;
-border-bottom:1px dotted #eee;
-color:#333;
-}
-
-.comanda-items li:last-child{border-bottom:none;}
-
-.comanda-footer{
-text-align:right;
-padding-top:10px;
-border-top:1px dashed #ccc;
-}
-
-.comanda-footer .action{
-background:#28a745;
-box-shadow:0 4px 15px rgba(40,167,69,0.3);
-}
-.comanda-footer .action:hover{
-background:#218838;
-box-shadow:0 8px 25px rgba(40,167,69,0.5);
-}
-</style>
-</head>
-<body>
-
-<!-- LOGIN -->
-<div id="login">
-<div class="loginBox">
-<h2> Wap Batata Recheada</h2>
-<input type="text" id="user" placeholder="Usuário">
-<input type="password" id="pass" placeholder="Senha">
-<button id="btnLogin">Entrar</button>
-</div>
-</div>
-
-<!-- SISTEMA -->
-<div id="sistema">
-<div class="sidebar">
-<h3> Wap Batata</h3>
-<button onclick="mostrar('produtos')">Cardápio</button>
-<button onclick="mostrar('pedidos')">Pedidos</button>
-<button onclick="mostrar('historico')">Vendas</button>
-<button onclick="mostrar('cozinha')">Cozinha</button>
-<button onclick="abrirChat()">Chat Cozinha</button>
-<button id="btnSair">Sair</button>
-</div>
-
-<div class="content">
-
-<!-- CARDÁPIO -->
-<div id="produtos" class="pagina">
-<div class="card">
-<h2>Cadastro de Batatas</h2>
-<input type="text" id="nomeProd" placeholder="Nome da Batata">
-<input type="number" id="precoProd" placeholder="Preço">
-<button class="action" onclick="addProduto()">Adicionar</button>
-
-<table id="tabelaProd">
-<tr><th>Batata</th><th>Preço</th><th>Editar Preço</th><th>Deletar</th></tr>
-</table>
-</div>
-</div>
-
-<!-- PEDIDOS -->
-<div id="pedidos" class="pagina">
-<div class="card">
-<h2>Novo Pedido</h2>
-<select id="listaProdutos"></select>
-<input type="number" id="quantidade" placeholder="Qtd" min="1" value="1" style="width:60px;margin-left:10px;">
-<button class="action" onclick="addPedido()">Adicionar ao Pedido</button>
-<button class="action" onclick="enviarCozinha()">Enviar para Cozinha</button>
-
-<h3>Itens:</h3>
-<ul id="itensPedido"></ul>
-
-<h3>Total: R$ <span id="totalPedido">0</span></h3>
-
-<input type="number" id="valorRecebido" class="trocoInput" placeholder="Valor Recebido">
-<button class="action" onclick="calcularTroco()">Calcular Troco</button>
-<p>Troco: R$ <span id="troco">0</span></p>
-
-<button class="action" onclick="finalizarPedido()">Finalizar Pedido</button>
-</div>
-</div>
-
-<!-- HISTÓRICO -->
-<div id="historico" class="pagina">
-<div class="card">
-<h2>Histórico de Vendas</h2>
-<ul id="listaHistorico"></ul>
-</div>
-</div>
-
-<!-- COZINHA -->
-<div id="cozinha" class="pagina">
-<div class="card">
-<h2>Pedidos na Cozinha</h2>
-<ul id="listaCozinha"></ul>
-</div>
-</div>
-
-</div>
-</div>
-
-<!-- CHAT MODAL -->
-<div id="chatModal">
-<div id="chatHeader">
-<span>Chat Cozinha</span>
-<button onclick="fecharChat()">X</button>
-</div>
-<ul id="chatBox"></ul>
-<div id="chatInputContainer">
-<input type="text" id="chatInput" placeholder="Digite sua mensagem">
-<button onclick="enviarChat()">Enviar</button>
-</div>
-</div>
-
-<script>
-let total=0;
-let usuarioAtual="";
-
-/* LOGIN FUNCIONAL */
-document.getElementById("btnLogin").addEventListener("click", function(){
-usuarioAtual=document.getElementById("user").value.toLowerCase();
-let pass=document.getElementById("pass").value;
-const logins=["kleyton","talyta","rafael","kemilly"];
-if(logins.includes(usuarioAtual) && pass==="2312"){
-document.getElementById("login").style.display="none";
-document.getElementById("sistema").style.display="flex";
-mostrar("produtos");
-}else{
-alert("Login incorreto!");
-}
-});
-
-/* LOGOUT FUNCIONAL */
-document.getElementById("btnSair").addEventListener("click", function(){
-if(confirm("Deseja realmente sair?")){
-document.getElementById("sistema").style.display="none";
-document.getElementById("login").style.display="flex";
-document.getElementById("user").value="";
-document.getElementById("pass").value="";
-}
-});
-
-/* ABA */
-function mostrar(id){
-document.querySelectorAll(".pagina").forEach(p=>p.style.display="none");
-document.getElementById(id).style.display="block";
-}
-
-/* PRODUTOS */
-function addProduto(){
-let nome=document.getElementById("nomeProd").value;
-let preco=parseFloat(document.getElementById("precoProd").value);
-if(!nome||!preco) return;
-let tabela=document.getElementById("tabelaProd");
-let row=tabela.insertRow();
-row.insertCell(0).innerText=nome;
-row.insertCell(1).innerText="R$ "+preco;
-let cellEdit=row.insertCell(2);
-let inputEdit=document.createElement("input");
-inputEdit.type="number"; inputEdit.value=preco; inputEdit.style.width="80px";
-inputEdit.onchange=function(){ row.cells[1].innerText="R$ "+parseFloat(this.value); atualizarListaProdutos(); }
-cellEdit.appendChild(inputEdit);
-let cellDelete=row.insertCell(3);
-let btnDelete=document.createElement("button"); btnDelete.innerText="Deletar"; btnDelete.className="action";
-btnDelete.onclick=function(){ row.remove(); atualizarListaProdutos(); };
-cellDelete.appendChild(btnDelete);
-atualizarListaProdutos();
-}
-
-function atualizarListaProdutos(){
-let lista=document.getElementById("listaProdutos");
-lista.innerHTML="";
-let tabela=document.getElementById("tabelaProd");
-for(let i=1;i<tabela.rows.length;i++){
-let nome=tabela.rows[i].cells[0].innerText;
-let preco=tabela.rows[i].cells[1].innerText.replace("R$ ","");
-let option=document.createElement("option"); option.value=preco; option.text=nome+" - R$ "+preco;
-lista.appendChild(option);
-}
-}
-
-/* PEDIDOS */
-function addPedido(){
-let select=document.getElementById("listaProdutos");
-let preco=parseFloat(select.value);
-let qtd=parseInt(document.getElementById("quantidade").value);
-if(!preco||qtd<1) return;
-let li=document.createElement("li");
-li.innerText=select.options[select.selectedIndex].text+" x"+qtd;
-let btn=document.createElement("button");
-btn.innerText="X"; btn.style.marginLeft="10px"; btn.style.background="#dc3545"; btn.style.color="white";
-btn.style.border="none"; btn.style.borderRadius="4px"; btn.style.padding="2px 6px"; btn.style.cursor="pointer";
-btn.onclick=function(){ total-=preco*qtd; document.getElementById("totalPedido").innerText=total.toFixed(2); li.remove();}
-li.appendChild(btn);
-document.getElementById("itensPedido").appendChild(li);
-total+=preco*qtd;
-document.getElementById("totalPedido").innerText=total.toFixed(2);
-}
-
-/* TROCO */
-function calcularTroco(){
-let val=parseFloat(document.getElementById("valorRecebido").value);
-if(!val) return;
-document.getElementById("troco").innerText=(val-total).toFixed(2);
-}
-
-/* FINALIZAR PEDIDO */
-function finalizarPedido(){
-if(total===0) return;
-let li=document.createElement("li"); li.innerText="Venda: R$ "+total.toFixed(2);
-document.getElementById("listaHistorico").appendChild(li);
-total=0;
-document.getElementById("itensPedido").innerHTML="";
-document.getElementById("totalPedido").innerText="0";
-document.getElementById("valorRecebido").value="";
-document.getElementById("troco").innerText="0";
-}
-
-/* ENVIAR PARA COZINHA */
-function enviarCozinha(){
-let itens=Array.from(document.getElementById("itensPedido").children).map(li=>li.innerText.replace("X","").trim());
-if(itens.length===0){ alert("Adicione itens!"); return;}
-let listaCozinha=document.getElementById("listaCozinha");
-let ticket=document.createElement("div"); ticket.className="comanda-ticket";
-let header=document.createElement("div"); header.className="comanda-header";
-let num=document.createElement("h3"); num.innerText="Pedido #"+(listaCozinha.children.length+1);
-let hora=document.createElement("span"); hora.className="comanda-time"; hora.innerText=new Date().toLocaleTimeString();
-header.appendChild(num); header.appendChild(hora); ticket.appendChild(header);
-let ul=document.createElement("ul"); ul.className="comanda-items";
-itens.forEach(it=>{ let li=document.createElement("li"); li.innerText=it; ul.appendChild(li);});
-ticket.appendChild(ul);
-let footer=document.createElement("div"); footer.className="comanda-footer";
-let btn=document.createElement("button"); btn.innerText="Concluído"; btn.className="action"; btn.onclick=function(){ ticket.remove();};
-footer.appendChild(btn); ticket.appendChild(footer);
-listaCozinha.appendChild(ticket);
-document.getElementById("itensPedido").innerHTML="";
-document.getElementById("totalPedido").innerText="0"; document.getElementById("valorRecebido").value="";
-document.getElementById("troco").innerText="0"; total=0;
-alert("Pedido enviado para cozinha!");
-}
-
-/* CHAT */
-function abrirChat(){document.getElementById("chatModal").style.display="flex";}
-function fecharChat(){document.getElementById("chatModal").style.display="none";}
-function enviarChat(){
-let texto=document.getElementById("chatInput").value;
-if(!texto) return;
-let chatBox=document.getElementById("chatBox");
-let li=document.createElement("li");
-li.innerText=usuarioAtual+": "+texto+" ("+new Date().toLocaleTimeString()+")";
-chatBox.appendChild(li);
-document.getElementById("chatInput").value="";
-chatBox.scrollTop=chatBox.scrollHeight;
-}
-</script>
-</body>
-</html
+<!DOCTYPE html>  <html>  
+<head>  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Wap Batata Recheada</title>  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>  <style>  
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}  
+body{height:100vh;overflow:hidden;background:#fff8e1}  
+  
+/* LOGIN */  
+#login{  
+height:100vh;  
+display:flex;  
+justify-content:center;  
+align-items:center;  
+background:linear-gradient(45deg,#ffcc00,#ff0000);  
+background-image: url('https://images.unsplash.com/photo-1617196031636-c5d45b4a1f47?fit=crop&w=1400&q=80');   
+background-size: cover;  
+background-position: center;  
+}  
+  
+.loginBox{  
+background:white;  
+padding:40px;  
+border-radius:15px;  
+width:90%;  
+max-width:350px;  
+text-align:center;  
+box-shadow:0 0 20px rgba(0,0,0,0.3);  
+}  
+  
+.loginBox h2{  
+color:#d32f2f;  
+margin-bottom:15px;  
+}  
+  
+.loginBox input{  
+width:100%;  
+padding:12px;  
+margin:10px 0;  
+border:2px solid #ffcc00;  
+border-radius:8px;  
+}  
+  
+.loginBox button{  
+width:100%;  
+padding:12px;  
+background:#d32f2f;  
+color:white;  
+border:none;  
+border-radius:8px;  
+cursor:pointer;  
+font-weight:bold;  
+}  
+  
+/* SISTEMA */  
+#sistema{  
+display:none;  
+height:100vh;  
+display:flex;  
+}  
+  
+/* MENU */  
+.sidebar{  
+width:220px;  
+background:#d32f2f;  
+color:white;  
+padding:20px;  
+display:flex;  
+flex-direction:column;  
+}  
+  
+.sidebar h3{  
+margin-bottom:20px;  
+}  
+  
+.sidebar button{  
+background:#ffcc00;  
+border:none;  
+color:#b71c1c;  
+padding:10px;  
+margin-bottom:10px;  
+cursor:pointer;  
+font-weight:bold;  
+border-radius:6px;  
+}  
+  
+.sidebar button:hover{  
+background:white;  
+}  
+  
+/* CONTEÚDO */  
+.content{  
+flex:1;  
+padding:20px;  
+overflow:auto;  
+background:#fffde7;  
+}  
+  
+.pagina{display:none;}  
+  
+.card{  
+background:white;  
+padding:20px;  
+border-radius:12px;  
+margin-bottom:20px;  
+box-shadow:0 3px 10px rgba(0,0,0,0.1);  
+border-left:8px solid #d32f2f;  
+}  
+  
+table{  
+width:100%;  
+border-collapse:collapse;  
+margin-top:10px;  
+}  
+  
+th{  
+background:#d32f2f;  
+color:white;  
+}  
+  
+th,td{  
+border:1px solid #ccc;  
+padding:8px;  
+}  
+  
+button.action{  
+background:#d32f2f;  
+color:white;  
+border:none;  
+padding:8px 12px;  
+cursor:pointer;  
+margin-top:10px;  
+border-radius:6px;  
+}  
+  
+input.trocoInput, input.chatInput{  
+width:100px;  
+padding:6px;  
+margin-top:10px;  
+border:1px solid #ccc;  
+border-radius:6px;  
+}  
+  
+/* CHAT MODAL */  
+#chatModal{  
+position:fixed;  
+right:20px;  
+bottom:20px;  
+width:300px;  
+background:white;  
+border-radius:12px;  
+box-shadow:0 0 15px rgba(0,0,0,0.3);  
+display:none;  
+flex-direction:column;  
+max-height:400px;  
+}  
+  
+#chatHeader{  
+background:#d32f2f;  
+color:white;  
+padding:10px;  
+border-radius:12px 12px 0 0;  
+font-weight:bold;  
+display:flex;  
+justify-content:space-between;  
+align-items:center;  
+}  
+  
+#chatBox{  
+flex:1;  
+padding:10px;  
+overflow-y:auto;  
+background:#fff9c4;  
+}  
+  
+#chatInputContainer{  
+display:flex;  
+padding:10px;  
+border-top:1px solid #ccc;  
+}  
+  
+#chatInputContainer input{  
+flex:1;  
+margin-right:5px;  
+border-radius:6px;  
+border:1px solid #ccc;  
+padding:6px;  
+}  
+  
+#chatInputContainer button{  
+padding:6px 10px;  
+border:none;  
+border-radius:6px;  
+background:#d32f2f;  
+color:white;  
+cursor:pointer;  
+}  
+  
+/* CÓDIGO DE BARRAS */  
+#barcodeScanner{  
+width:100%;  
+min-height:250px;  
+margin-top:10px;  
+border-radius:8px;  
+background: #eee;  
+}  
+</style>  </head>  <body>  <div id="login">  
+<div class="loginBox">  
+<h2> Wap Batata Recheada</h2>  
+<input type="text" id="user" placeholder="Usuário">  
+<input type="password" id="pass" placeholder="Senha">  
+<button onclick="login()">Entrar</button>  
+</div>  
+</div>  <div id="sistema">  <div class="sidebar">  
+<h3> Wap Batata</h3>  
+<button onclick="mostrar('produtos')">Cardápio</button>  
+<button onclick="mostrar('pedidos')">Pedidos</button>  
+<button onclick="mostrar('historico')">Vendas</button>  
+<button onclick="mostrar('cozinha')">Cozinha</button>  
+<button onclick="mostrar('codigoBarras')">Código de Barras</button>  
+<button onclick="abrirChat()">Chat Cozinha</button>  
+<button onclick="logout()">Sair</button>  
+</div>  <div class="content">  <div id="produtos" class="pagina">  
+<div class="card">  
+<h2>Cadastro de Batatas</h2>  
+<input type="text" id="nomeProd" placeholder="Nome da Batata">  
+<input type="number" id="precoProd" placeholder="Preço">  
+<button class="action" onclick="addProduto()">Adicionar</button>  <table id="tabelaProd">  
+<tr><th>Batata</th><th>Preço</th><th>Editar Preço</th><th>Deletar</th></tr>  
+</table>  
+</div>  
+</div>  <div id="pedidos" class="pagina">  
+<div class="card">  
+<h2>Novo Pedido</h2>  
+<select id="listaProdutos"></select>  
+<input type="number" id="quantidade" placeholder="Qtd" min="1" value="1" style="width:60px;margin-left:10px;">  
+<button class="action" onclick="addPedido()">Adicionar ao Pedido</button>  
+<button class="action" onclick="enviarCozinha()">Enviar para Cozinha</button>  <h3>Itens:</h3>  
+<ul id="itensPedido"></ul>  <h3>Total: R$ <span id="totalPedido">0</span></h3>  <input type="number" id="valorRecebido" class="trocoInput" placeholder="Valor Recebido">  
+<button class="action" onclick="calcularTroco()">Calcular Troco</button>  
+<p>Troco: R$ <span id="troco">0</span></p>  <button class="action" onclick="finalizarPedido()">Finalizar Pedido</button>
+
+</div>  
+</div>  <div id="historico" class="pagina">  
+<div class="card">  
+<h2>Histórico de Vendas</h2>  
+<ul id="listaHistorico"></ul>  
+</div>  
+</div>  <div id="cozinha" class="pagina">  
+<div class="card">  
+<h2>Pedidos na Cozinha</h2>  
+<ul id="listaCozinha"></ul>  
+</div>  
+</div>  <div id="codigoBarras" class="pagina">  
+<div class="card">  
+<h2>Código de Barras</h2>  
+<input type="text" id="barcodeInput" placeholder="Código manual">  
+<button class="action" onclick="addBarcode()">Adicionar Manual</button>  
+<div id="barcodeScanner"></div>  
+<ul id="listaBarcodes"></ul>  
+<button class="action" onclick="stopScanner()">Parar Scanner</button>  
+</div>  
+</div>  </div>  
+</div>  <div id="chatModal">  
+<div id="chatHeader">  
+<span>Chat Cozinha</span>  
+<button onclick="fecharChat()">X</button>  
+</div>  
+<div id="chatBox"></div>  
+<div id="chatInputContainer">  
+<input type="text" id="chatInput" placeholder="Digite sua mensagem">  
+<button onclick="enviarChat()">Enviar</button>  
+</div>  
+</div>  <script>  
+let total=0;  
+let usuarioAtual="";  
+let barcodeList = {};  
+let html5QrCode;  
+  
+/* LOGIN */  
+function login(){  
+usuarioAtual = document.getElementById("user").value.trim().toLowerCase();  
+let pass=document.getElementById("pass").value.trim();  
+if(usuarioAtual==="talyta" && pass==="2312"){  
+document.getElementById("login").style.display="none";  
+document.getElementById("sistema").style.display="flex";  
+}else{  
+alert("Login incorreto");  
+}  
+}  
+  
+/* MOSTRAR ABA */  
+function mostrar(id){  
+document.querySelectorAll(".pagina").forEach(p=>p.style.display="none");  
+document.getElementById(id).style.display="block";  
+// Se entrar na aba de código de barras, inicia o scanner automaticamente  
+if(id === 'codigoBarras') {  
+    startScanner();  
+} else {  
+    stopScanner();  
+}  
+}  
+  
+/* LOGOUT */  
+function logout(){ location.reload(); }  
+  
+/* PRODUTOS */  
+function addProduto(){  
+let nome=document.getElementById("nomeProd").value;  
+let preco=parseFloat(document.getElementById("precoProd").value);  
+if(!nome || !preco) return;  
+  
+let tabela=document.getElementById("tabelaProd");  
+let row=tabela.insertRow();  
+row.insertCell(0).innerText=nome;  
+row.insertCell(1).innerText="R$ "+preco;  
+  
+let cellEdit=row.insertCell(2);  
+let inputEdit=document.createElement("input");  
+inputEdit.type="number";  
+inputEdit.value=preco;  
+inputEdit.style.width="80px";  
+inputEdit.onchange=function(){row.cells[1].innerText="R$ "+parseFloat(this.value); atualizarListaProdutos();}  
+cellEdit.appendChild(inputEdit);  
+  
+let cellDelete=row.insertCell(3);  
+let btnDelete=document.createElement("button");  
+btnDelete.innerText="Deletar";  
+btnDelete.className="action";  
+btnDelete.onclick=function(){row.remove(); atualizarListaProdutos();}  
+cellDelete.appendChild(btnDelete);  
+  
+atualizarListaProdutos();  
+}  
+  
+function atualizarListaProdutos(){  
+let lista=document.getElementById("listaProdutos");  
+lista.innerHTML="";  
+let tabela=document.getElementById("tabelaProd");  
+for(let i=1;i<tabela.rows.length;i++){  
+let nome=tabela.rows[i].cells[0].innerText;  
+let preco=tabela.rows[i].cells[1].innerText.replace("R$ ","");  
+let option=document.createElement("option");  
+option.value=preco;  
+option.text=nome+" - R$ "+preco;  
+lista.appendChild(option);  
+}  
+}  
+  
+/* PEDIDOS */  
+function addPedido(){  
+let select=document.getElementById("listaProdutos");  
+let preco=parseFloat(select.value);  
+let quantidade=parseInt(document.getElementById("quantidade").value);  
+if(!preco || quantidade<1) return;  
+  
+let li=document.createElement("li");  
+li.innerText = select.options[select.selectedIndex].text + " x"+quantidade;  
+  
+let btnRemover=document.createElement("button");  
+btnRemover.innerText="Remover";  
+btnRemover.className="action";  
+btnRemover.style.marginLeft="10px";  
+btnRemover.onclick=function(){ li.remove(); total-=preco*quantidade; document.getElementById("totalPedido").innerText=total.toFixed(2);}  
+li.appendChild(btnRemover);  
+document.getElementById("itensPedido").appendChild(li);  
+  
+total+=preco*quantidade;  
+document.getElementById("totalPedido").innerText=total.toFixed(2);  
+}  
+  
+/* TROCO */  
+function calcularTroco(){let valor=parseFloat(document.getElementById("valorRecebido").value); if(!valor) return; document.getElementById("troco").innerText=(valor-total).toFixed(2);}  
+  
+/* FINALIZAR PEDIDO */  
+function finalizarPedido(){  
+if(total===0) return;  
+let li=document.createElement("li");  
+li.innerText="Venda: R$ "+total.toFixed(2);  
+document.getElementById("listaHistorico").appendChild(li);  
+  
+total=0;  
+document.getElementById("itensPedido").innerHTML="";  
+document.getElementById("totalPedido").innerText="0";  
+document.getElementById("valorRecebido").value="";  
+document.getElementById("troco").innerText="0";  
+}  
+  
+/* ENVIAR PARA COZINHA */  
+function enviarCozinha(){  
+let itens=Array.from(document.getElementById("itensPedido").children).map(li=>li.innerText.replace("Remover","").trim());  
+if(itens.length===0) return;  
+  
+let listaCozinha=document.getElementById("listaCozinha");  
+itens.forEach(item=>{  
+let li=document.createElement("li");  
+li.innerText=item+" - "+new Date().toLocaleTimeString();  
+let btnConcluir=document.createElement("button");  
+btnConcluir.innerText="Concluído";  
+btnConcluir.className="action";  
+btnConcluir.style.marginLeft="10px";  
+btnConcluir.onclick=function(){ li.remove();}  
+li.appendChild(btnConcluir);  
+listaCozinha.appendChild(li);  
+});  
+  
+alert("Pedido enviado para cozinha!");  
+document.getElementById("itensPedido").innerHTML="";  
+document.getElementById("totalPedido").innerText="0";  
+document.getElementById("valorRecebido").value="";  
+document.getElementById("troco").innerText="0";  
+total=0;  
+}  
+  
+/* CHAT */  
+function abrirChat(){document.getElementById("chatModal").style.display="flex";}  
+function fecharChat(){document.getElementById("chatModal").style.display="none";}  
+function enviarChat(){let texto=document.getElementById("chatInput").value;if(!texto) return;let li=document.createElement("li");li.innerText=usuarioAtual+": "+texto+" ("+new Date().toLocaleTimeString()+")";document.getElementById("chatBox").appendChild(li);document.getElementById("chatInput").value="";}  
+  
+/* CÓDIGO DE BARRAS */  
+function addBarcode(){  
+let code=document.getElementById("barcodeInput").value.trim();  
+if(!code) return;  
+barcodeList[code]=barcodeList[code]||0;  
+barcodeList[code]++;  
+atualizarListaBarcodes();  
+document.getElementById("barcodeInput").value="";  
+}  
+function atualizarListaBarcodes(){  
+let lista=document.getElementById("listaBarcodes");  
+lista.innerHTML="";  
+for(let key in barcodeList){  
+let li=document.createElement("li");  
+li.innerText=key+" x"+barcodeList[key];  
+lista.appendChild(li);  
+}  
+}  
+  
+/* SCANNER REAL */  
+function startScanner(){  
+if(html5QrCode) return;  
+html5QrCode = new Html5Qrcode("barcodeScanner");  
+html5QrCode.start(  
+  { facingMode: "environment" },  
+  { fps:10, qrbox:250 },  
+  qrCodeMessage => {  
+    barcodeList[qrCodeMessage]=barcodeList[qrCodeMessage]||0;  
+    barcodeList[qrCodeMessage]++;  
+    atualizarListaBarcodes();  
+    // Feedback visual opcional: alert("Escaneado: " + qrCodeMessage);  
+  },  
+  errorMessage => { /* Erros de leitura silenciosos */ }  
+).catch(err => {  
+    console.error("Erro ao iniciar scanner:", err);  
+    alert("Erro na câmera: Certifique-se de estar usando HTTPS e ter dado permissão.");  
+});  
+}  
+  
+function stopScanner(){  
+if(html5QrCode){  
+html5QrCode.stop().then(()=>{ html5QrCode=null; }).catch(err=>console.error(err));  
+}  
+}  
+  
+window.onload=function(){ atualizarListaProdutos(); }  
+</script>  </body>  
+</html> 
